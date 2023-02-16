@@ -1,0 +1,12 @@
+body {
+    @apply dark:bg-[#0b1120] text-black dark:text-white;
+}
+
+.markdown > h1, .markdown > ** > h1 {
+    @apply text-2xl font-semibold;
+}
+
+.markdown > ul, .markdown > ** > ul {
+    @apply ml-8;
+    list-style-type: disc;
+}

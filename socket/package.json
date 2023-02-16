@@ -1,0 +1,16 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.13.0",
+    "@types/socket.io": "^3.0.2"
+  }
+}
