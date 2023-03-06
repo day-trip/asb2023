@@ -99,7 +99,6 @@ const App = () => {
     }, [sort]);
 
     useEffect(() => {
-        ChatGPT.init(user);
         socket.connect();
 
         socket.on('connect', () => {
