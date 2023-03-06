@@ -4,19 +4,34 @@ type Idea = {
     id: number,
     content: string,
     votes: number,
-    creator: string
+    creator: string,
+    timestamp: number
+}
+
+type Guess = {
+    id: number,
+    content: string,
+    votes: number,
+    creator: string,
+    timestamp: number
 }
 
 const ideas = new Table<Idea>("ideas");
+const guesses = new Table<Guess>("guesses");
 
-const tables = {ideas};
+const tables = {
+    ideas,
+    guesses
+};
 
 export default tables;
 
 export {
-    ideas
+    ideas,
+    guesses
 };
 
 export type {
-    Idea
+    Idea,
+    Guess
 }

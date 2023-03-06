@@ -55,17 +55,6 @@ class Data {
 
     static async _processResult(result: {[key: string]: any}) {
         let rows = result.rows;
-        /*if (Array.isArray(rows)) {
-            const subs = rows.map(row => row.author || undefined);
-            const nicknames = await Auth.lazyLoad(subs.filter(value => !!value));
-            rows = rows.map(row => {
-                if ('author' in row) {
-                    const user = new CognitoUser({Username: row.author, Pool: Auth.pool});
-                    user.updateAttributes(nicknames[row.author], () => {});
-                    row.author = user;
-                }
-            });
-        }*/
         return {rows: rows || [], fields: result.fields || [], oid: result.oid || undefined};
     }
 

@@ -10,3 +10,31 @@ body {
     @apply ml-8;
     list-style-type: disc;
 }
+
+.explode:after {
+    display: inline-block;
+    content: none;
+
+    animation: explode 1s linear;
+
+    font-weight: bold;
+    letter-spacing: normal;
+    opacity: 100%;
+}
+
+@keyframes explode {
+    0% {
+        content: attr(data-content);
+        font-size: 10px;
+        transform: translate(0%, 0%);
+        letter-spacing: normal;
+        opacity: 100%;
+    }
+    100% {
+        content: none;
+        font-size: 1000px;
+        transform: translate(-50%, -50%);
+        letter-spacing: 5rem;
+        opacity: 0%;
+    }
+}

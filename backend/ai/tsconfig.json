@@ -1,0 +1,8 @@
+{
+  "ts-node": {
+    "swc": true
+  },
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true
+  }
+}

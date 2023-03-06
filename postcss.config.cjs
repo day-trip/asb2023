@@ -7,7 +7,7 @@ module.exports = {
     'postcss-map-get': {},
     'postcss-sort-media-queries': {},
     'postcss-assets': {loadPaths: ['src/img/']},
-    'cssnano': {},
-    'postcss-math': {}
+    'postcss-math': {},
+    'cssnano': {}
   },
 }
