@@ -1,4 +1,4 @@
-# Make-EMS-Fun
+# Make EMS Fun<i>!</i>
 Try it at https://tinyurl.com/make-ems-fun!
 
 ### About
