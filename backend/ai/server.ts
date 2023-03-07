@@ -4,6 +4,10 @@ import {Configuration, OpenAIApi} from "openai";
 import cors from "cors";
 import _ from "lodash";
 import Filter from "bad-words";
+import {DateTime} from "luxon";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const {Pool} = pg;
 
@@ -17,7 +21,7 @@ const pool = new Pool({
     port: 5432
 });
 
-const configuration = new Configuration({ apiKey: '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' });
+const configuration = new Configuration({ apiKey: process.env.OPENAI_KEY });
 const openai = new OpenAIApi(configuration);
 
 app.use(express.text({type: "*/*"}));
@@ -26,30 +30,31 @@ app.use(cors({origin: "*"}));
 const filter = new Filter();
 
 app.post('/message', async (req, res) => {
-    console.log(req.body)
-    const json = JSON.parse(req.body);
-    const body = json.body;
-
-    // embedding
-    const embeddingResponse = await openai.createEmbedding({
-        model: "text-embedding-ada-002",
-        input: body.replace(/\n/g, ' ')
-    });
-    const [{ embedding }] = embeddingResponse.data.data;
+    console.log(req.body);
 
     const client = await pool.connect();
+
     try {
-        const result = await client.query('select * from match_messages($1, $2, $3, $4);', ["[" + embedding.toString() + "]", 0.875, 10, json.session]);
+        const json = JSON.parse(req.body);
+        const body = json.body;
+
+        const embeddingResponse = await openai.createEmbedding({
+            model: "text-embedding-ada-002",
+            input: body.replace(/\n/g, ' ')
+        });
+        const [{ embedding }] = embeddingResponse.data.data;
+
+        const result: {rows: {user: string, session: string, timestamp: string, similarity: number, content: string, id: number}[]} = await client.query('select * from match_messages($1, $2, $3, $4);', ["[" + embedding.toString() + "]", 0.725, 10, json.session]);
         const conversations = (await Promise.all(result.rows.filter((tag, index, array) => array.findIndex(t => t.session === tag.session) == index).map(async cv => {
             console.log(cv);
-            const cr = await client.query('select * from messages where multiple = false and session = $1 order by index', [cv.session]);
-            return cr.rows.length > 0 ? `(User ${cv.user}'s messages to you at ${new Date(cv.timestamp).toDateString()})\n"""\n` + (cr.rows.map(row => row.content.trim()).join('\n---\n')) + `\n"""` : undefined;
+            const cr = await client.query('select * from messages where session = $1 order by index', [cv.session]);
+            return cr.rows.length > 0 ? `(User ${cv.user}'s messages to you at ${DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm")})\n"""\n` + (cr.rows.map(row => row.content.trim()).join('\n---\n')) + `\n"""` : undefined;
         }))).filter(cv => cv !== undefined);
 
         const moderationResponse = await openai.createModeration({input: body.replace(/\n/g, ' ')});
         const moderation = moderationResponse.data.results[0];
         if (!(moderation.flagged || Object.values(moderation.categories).includes(true) || filter.isProfane(body))) {
-            await client.query('insert into messages (content, embedding, session, index, multiple, "user", timestamp) values ($1, $2, $3, $4, $5, $6, $7);', [body, "[" + embedding.toString() + "]", json.session, json.index, false, json.user, Date.now()]);
+            await client.query('insert into messages (content, embedding, session, index, "user", timestamp) values ($1, $2, $3, $4, $5, $6);', [body, "[" + embedding.toString() + "]", json.session, json.index, json.user, Math.floor(DateTime.now().toSeconds())]);
         } else {
             console.warn("Flagged " + JSON.stringify(moderation));
         }

@@ -30,6 +30,7 @@ import Sort from "@mui/icons-material/Sort";
 import {Delete, Send} from "@mui/icons-material";
 import ChatGPT from "./ai/ChatGPT";
 import {yieldStream} from "yield-stream";
+import {Button, Drawer} from "@mui/material";
 
 const socket = io("ws://ec2-18-209-224-242.compute-1.amazonaws.com:5000", {autoConnect: false});
 
@@ -78,6 +79,8 @@ const App = () => {
 
     const isAdmin = localStorage.admin && localStorage.admin.toLowerCase() === "doi doi uwu";
 
+    const [infoViewing, setInfoViewing] = useState(false);
+
     /*useEffect(() => {
         const c = setInterval(() => {
             const delta = new Date(Date.parse("30 Mar 2023 00:00:00 GMT") - Date.now());
@@ -88,6 +91,12 @@ const App = () => {
             clearInterval(c);
         }
     }, []);*/
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.removeItem("session");
+        });
+    }, []);
 
     useEffect(() => {
         const x = async () => {
@@ -182,6 +191,7 @@ const App = () => {
             const stream = await ChatGPT.send([...messages], message, user, session);
             const decoder = new TextDecoder();
             let i = 0;
+            setMessage("");
             for await (const chunk of yieldStream(stream)) {
                 i++;
                 const token = JSON.parse(decoder.decode(chunk as Uint8Array));
@@ -193,7 +203,6 @@ const App = () => {
                     })
                 }
             }
-            setMessage("");
         }
         x().then();
     }
@@ -353,6 +362,20 @@ const App = () => {
                 <p className={`text-xl ${message.role === "assistant" && "text-orange-200"}`}>{message.content}</p>
             </div>)}
         </div>
+        {page === 2 && <div className="fixed bottom-0 z-50 flex justify-center w-screen border-t border-slate-500 backdrop-blur-md backdrop-brightness-75">
+            <div className="max-w-4xl w-full flex justify-start py-3">
+                <Button variant="contained" color="primary" size="small" className="!normal-case" onClick={() => {setInfoViewing(true)}}>About</Button>
+            </div>
+        </div>}
+        {page === 2 && <Drawer PaperProps={{className: "!bg-slate-900 border-t border-slate-700"}} anchor="bottom" open={infoViewing} onClose={() => {setInfoViewing(false)}}>
+            <div className="mx-auto max-w-4xl w-full text-white py-6">
+                <h3 className="font-semibold text-xl text-orange-300">About</h3>
+                <p className="mb-2">Hi, as you could probably tell from the website, I am Jai. I'm a 7th grader, and I'm running for president. I thought it would be cool to use ChatGPT to create some hype for my campaign.</p>
+                <p className="mb-2">If you are curious about what this means: I'm using OpenAI's ChatGPT API that was released last week. I compiled a custom version of PostgreSQL on Amazon Linux that implements vector data types and indexing. I'm using OpenAI's embeddings API to vectorize conversations and am storing this in the Postgres vector database. In ongoing conversations, I'm using a cosine-similarity search to look up relevant conversations from the vector database and I pass this on to ChatGPT as context. This means that ChatGPT is able to use context in real time from across user sessions.</p>
+                <p className="mb-2">I know you will be tempted to break this. Please remember that this is a middle school environment. I am using regex matching on a Google dataset of bad words to block them in the prompt (these I don't save to the vector database). I'm also calling OpenAI's content moderation API to detect hateful or self-harming messages. But, it is well-known that LLMs are far from perfect, and if you are determined, you can break this easily. Please don't try here, that is really not the point.</p>
+                <p>By the way, if you are really curious, here is the <a href="https://github.com/day-trip/asb2023" className="text-blue-300">source code</a>. Thank you for visiting my website and if you are eligible to vote, please vote for me : )</p>
+            </div>
+        </Drawer>}
     </>
 }
 
