@@ -189,10 +189,15 @@ const App = () => {
                 return;
             }
             const msg = {role: "user", content: message};
-            setMessages([...messages, msg, {role: "assistant", content: ""}]);
+            setMessages([...messages, msg, {role: "assistant", content: "..."}]);
             setMessage("");
             setTyping(true);
             const stream = await ChatGPT.send([...messages], message, user, session);
+            setMessages(msgs1 => {
+                const msgs = [...msgs1];
+                msgs[msgs.length - 1].content = "";
+                return msgs;
+            });
             const decoder = new TextDecoder();
             let i = 0;
             for await (const chunk of yieldStream(stream)) {
