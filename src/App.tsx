@@ -81,6 +81,8 @@ const App = () => {
 
     const [infoViewing, setInfoViewing] = useState(false);
 
+    const [typing, setTyping] = useState(false);
+
     /*useEffect(() => {
         const c = setInterval(() => {
             const delta = new Date(Date.parse("30 Mar 2023 00:00:00 GMT") - Date.now());
@@ -188,10 +190,11 @@ const App = () => {
             }
             const msg = {role: "user", content: message};
             setMessages([...messages, msg, {role: "assistant", content: ""}]);
+            setMessage("");
+            setTyping(true);
             const stream = await ChatGPT.send([...messages], message, user, session);
             const decoder = new TextDecoder();
             let i = 0;
-            setMessage("");
             for await (const chunk of yieldStream(stream)) {
                 i++;
                 const token = JSON.parse(decoder.decode(chunk as Uint8Array));
@@ -203,6 +206,7 @@ const App = () => {
                     })
                 }
             }
+            setTyping(false);
         }
         x().then();
     }
@@ -322,7 +326,7 @@ const App = () => {
                 </>}
                 {page === 2 && <>
                     <TextareaAutosize placeholder="Say something" className="w-full resize-none bg-slate-900 rounded-tl-md rounded-bl-md focus:ring-orange-500 focus:border-orange-500 text-xl placeholder-orange-200 placeholder-opacity-50 focus:placeholder-opacity-25" minRows={2} value={message} onChange={e => setMessage(e.target.value)}/>
-                    <button className="bg-orange-500 rounded-tr-md rounded-br-md min-w-[4rem] transition-opacity hover:opacity-75 disabled:opacity-50" onClick={addMessage}><Send/></button>
+                    <button className="bg-orange-500 rounded-tr-md rounded-br-md min-w-[4rem] transition-opacity hover:opacity-75 disabled:opacity-50" disabled={typing} onClick={addMessage}><Send/></button>
                 </>}
             </Stack>
             {page < 2 && <Stack direction="row" alignItems="center" className="mb-5">
