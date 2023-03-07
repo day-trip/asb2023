@@ -14,10 +14,10 @@ const {Pool} = pg;
 const app = express();
 
 const pool = new Pool({
-    user: "postgres",
+    user: process.env.DB_USER,
     host: "ec2-18-209-224-242.compute-1.amazonaws.com",
     database: "postgres",
-    password: "JaiAvi10:14",
+    password: process.env.DB_PSWD,
     port: 5432
 });
 
