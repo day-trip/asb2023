@@ -1,6 +1,9 @@
 import {Client} from "pg";
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -10,10 +13,10 @@ app.use(cors({origin: "*"}));
 app.post('/', (req, res) => {
     (async () => {
         const client = new Client({
-            user: "postgres",
+            user: process.env.DB_USER,
             host: "ec2-18-209-224-242.compute-1.amazonaws.com",
             database: "postgres",
-            password: "JaiAvi10:14",
+            password: process.env.DB_PSWD,
             port: 5432
         });
 

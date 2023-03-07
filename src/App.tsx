@@ -331,7 +331,7 @@ const App = () => {
                 </>}
                 {page === 2 && <>
                     <TextareaAutosize placeholder="Say something" className="w-full resize-none bg-slate-900 rounded-tl-md rounded-bl-md focus:ring-orange-500 focus:border-orange-500 text-xl placeholder-orange-200 placeholder-opacity-50 focus:placeholder-opacity-25" minRows={2} value={message} onChange={e => setMessage(e.target.value)}/>
-                    <button className="bg-orange-500 rounded-tr-md rounded-br-md min-w-[4rem] transition-opacity hover:opacity-75 disabled:opacity-50" disabled={typing} onClick={addMessage}><Send/></button>
+                    <button className="bg-orange-500 rounded-tr-md rounded-br-md min-w-[4rem] transition-opacity hover:opacity-75 disabled:opacity-50" disabled={typing || message.length < 1} onClick={addMessage}><Send/></button>
                 </>}
             </Stack>
             {page < 2 && <Stack direction="row" alignItems="center" className="mb-5">

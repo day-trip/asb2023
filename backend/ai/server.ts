@@ -48,7 +48,7 @@ app.post('/message', async (req, res) => {
         const conversations = (await Promise.all(result.rows.filter((tag, index, array) => array.findIndex(t => t.session === tag.session) == index).map(async cv => {
             console.log(cv);
             const cr = await client.query('select * from messages where session = $1 order by index', [cv.session]);
-            return cr.rows.length > 0 ? `(User ${cv.user}'s messages to you at ${DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm")})\n"""\n` + (cr.rows.map(row => row.content.trim()).join('\n---\n')) + `\n"""` : undefined;
+            return cr.rows.length > 0 ? `A previous user's messages to you at ${DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm")})\n"""\n` + (cr.rows.map(row => row.content.trim()).join('\n---\n')) + `\n"""` : undefined;
         }))).filter(cv => cv !== undefined);
 
         const moderationResponse = await openai.createModeration({input: body.replace(/\n/g, ' ')});
