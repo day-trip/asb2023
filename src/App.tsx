@@ -20,7 +20,7 @@ import ballot from "./img/ballot.png";
 
 import Filter from "bad-words";
 
-import "@fontsource/roboto/latin.css"
+import "@fontsource/roboto";
 
 import seedrand from "seedrandom"
 import ReactMarkdown from "react-markdown";
@@ -293,7 +293,7 @@ const App = () => {
                 </div>
             </Toolbar>
         </AppBar>
-        <div className="max-w-4xl w-full mx-auto">
+        <div className={`max-w-4xl w-full mx-auto ${page === 2 && "pb-12"}`}>
             <div className="bg-slate-700 rounded-lg mb-10 mt-10 p-5">
                 {page === 0 && <>
                     <h1 className="text-5xl font-semibold mb-8 text-orange-300">Let's make EMS fun!</h1>
@@ -376,7 +376,7 @@ const App = () => {
                 <h3 className="font-semibold text-xl text-orange-300">About</h3>
                 <p className="mb-2">Hi, as you could probably tell from the website, I am Jai. I'm a 7th grader, and I'm running for president. I thought it would be cool to use ChatGPT to create some hype for my campaign.</p>
                 <p className="mb-2">If you are curious about what this means: I'm using OpenAI's ChatGPT API that was released last week. I compiled a custom version of PostgreSQL on Amazon Linux that implements vector data types and indexing. I'm using OpenAI's embeddings API to vectorize conversations and am storing this in the Postgres vector database. In ongoing conversations, I'm using a cosine-similarity search to look up relevant conversations from the vector database and I pass this on to ChatGPT as context. This means that ChatGPT is able to use context in real time from across user sessions.</p>
-                <p className="mb-2">I know you will be tempted to break this. Please remember that this is a middle school environment. I am using regex matching on a Google dataset of bad words to block them in the prompt (these I don't save to the vector database). I'm also calling OpenAI's content moderation API to detect hateful or self-harming messages. But, it is well-known that LLMs are far from perfect, and if you are determined, you can break this easily. Please don't try here, that is really not the point.</p>
+                <p className="mb-2">I know you will be tempted to break this. Please remember that this is a middle school environment. I am using regex matching on a Google dataset of bad words to block them in the prompt (these I don't save to the vector database). I'm also calling OpenAI's content moderation API to detect hateful or self-harming messages. But, it is well-known that LLMs are far from perfect, and if you are determined, you can break this easily. Please don't try here, that is really not the point. Also, this is all running on a t2.micro instance :)</p>
                 <p>By the way, if you are really curious, here is the <a href="https://github.com/day-trip/asb2023" className="text-blue-300">source code</a>. Thank you for visiting my website and if you are eligible to vote, please vote for me : )</p>
             </div>
         </Drawer>}
