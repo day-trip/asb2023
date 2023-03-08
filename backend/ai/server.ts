@@ -44,11 +44,11 @@ app.post('/message', async (req, res) => {
         });
         const [{ embedding }] = embeddingResponse.data.data;
 
-        const result: {rows: {user: string, session: string, timestamp: string, similarity: number, content: string, id: number}[]} = await client.query('select * from match_messages($1, $2, $3, $4);', ["[" + embedding.toString() + "]", 0.725, 10, json.session]);
+        const result: {rows: {user: string, session: string, timestamp: string, similarity: number, content: string, id: number}[]} = await client.query('select * from match_messages($1, $2, $3, $4);', ["[" + embedding.toString() + "]", 0.725, 3, json.session]);
         const conversations = (await Promise.all(result.rows.filter((tag, index, array) => array.findIndex(t => t.session === tag.session) == index).map(async cv => {
             console.log(cv);
             const cr = await client.query('select * from messages where session = $1 order by index', [cv.session]);
-            return cr.rows.length > 0 ? `A previous user's messages to you at ${DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm")})\n"""\n` + (cr.rows.map(row => row.content.trim()).join('\n---\n')) + `\n"""` : undefined;
+            return cr.rows.length > 0 ? `${json.user === cv.user ? "Your current user's" : "Some other user's"} previous messages to you at ${DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm")})\n"""\n` + (cr.rows.map(row => row.content.trim()).join('\n---\n')) + `\n"""` : undefined;
         }))).filter(cv => cv !== undefined);
 
         const moderationResponse = await openai.createModeration({input: body.replace(/\n/g, ' ')});

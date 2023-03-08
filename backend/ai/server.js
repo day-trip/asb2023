@@ -235,7 +235,7 @@ app.post("/message", function() {
                         client.query("select * from match_messages($1, $2, $3, $4);", [
                             "[" + embedding.toString() + "]",
                             0.725,
-                            10,
+                            3,
                             json.session
                         ])
                     ];
@@ -264,7 +264,7 @@ app.post("/message", function() {
                                             cr = _state.sent();
                                             return [
                                                 2,
-                                                cr.rows.length > 0 ? "(User ".concat(cv.user, "'s messages to you at ").concat(DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm"), ')\n"""\n') + cr.rows.map(function(row) {
+                                                cr.rows.length > 0 ? "".concat(json.user === cv.user ? "Your current user's" : "Some other user's", " previous messages to you at ").concat(DateTime.fromSeconds(Number.parseInt(cv.timestamp)).toFormat("MMMM dd, yyyy - hh:mm"), ')\n"""\n') + cr.rows.map(function(row) {
                                                     return row.content.trim();
                                                 }).join("\n---\n") + '\n"""' : undefined
                                             ];

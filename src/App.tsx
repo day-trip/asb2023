@@ -83,6 +83,8 @@ const App = () => {
 
     const [typing, setTyping] = useState(false);
 
+    const [trigger, setTrigger] = useState(false);
+
     /*useEffect(() => {
         const c = setInterval(() => {
             const delta = new Date(Date.parse("30 Mar 2023 00:00:00 GMT") - Date.now());
@@ -97,6 +99,9 @@ const App = () => {
     useEffect(() => {
         window.addEventListener('beforeunload', () => {
             sessionStorage.removeItem("session");
+        });
+        window.addEventListener('scroll', () => {
+            setTrigger(window.scrollY > 45);
         });
     }, []);
 
@@ -121,11 +126,9 @@ const App = () => {
         });
 
         socket.on('votes', (packet) => {
-            console.log(packet);
             if (packet.user !== user) {
                 setIdeas(ideas => ideas!.map(idea => {
                     if (idea.id === packet.id) {
-                        console.log("INCR-ING!");
                         idea.votes += packet.incr;
                     }
                     return idea;
@@ -143,7 +146,6 @@ const App = () => {
             if (packet.user !== user) {
                 setGuesses(guesses => guesses!.map(guess => {
                     if (guess.id === packet.id) {
-                        console.log("INCR-ING!");
                         guess.votes += packet.incr;
                     }
                     return guess;
@@ -228,13 +230,10 @@ const App = () => {
 
             let incr;
             if (voted[idea.id] === undefined) {
-                console.log("A")
                 incr = direction === "up" ? 1 : -1;
             } else if(voted[idea.id] === direction) {
-                console.log("B")
                 incr = direction === "up" ? -1 : 1;
             } else {
-                console.log("C")
                 incr = direction === "up" ? 2 : -2;
             }
             idea.votes += incr;
@@ -258,13 +257,10 @@ const App = () => {
 
             let incr;
             if (votedg[guess.id] === undefined) {
-                console.log("A")
                 incr = direction === "up" ? 1 : -1;
             } else if(votedg[guess.id] === direction) {
-                console.log("B")
                 incr = direction === "up" ? -1 : 1;
             } else {
-                console.log("C")
                 incr = direction === "up" ? 2 : -2;
             }
             guess.votes += incr;
@@ -289,7 +285,7 @@ const App = () => {
     }
 
     return <>
-        <AppBar position="sticky" color="transparent" elevation={0} className={`dark:backdrop-brightness-75 backdrop-blur-sm border-b border-slate-200 dark:border-slate-500`}>
+        <AppBar position="sticky" color="transparent" elevation={0} className={`${trigger ? "backdrop-brightness-75 border-slate-500" : "border-slate-700"} backdrop-blur-sm border-b`}>
             <Toolbar className="w-full max-w-4xl mx-auto" disableGutters={true}>
                 <img src={ems} alt="Evergreen Middle School" className="w-8 h-8 mr-2"/>
                 <p style={{ flexGrow: 1 }} className="font-bold text-xl">EMS - ASB 2023</p>
@@ -379,7 +375,7 @@ const App = () => {
         {page === 2 && <Drawer PaperProps={{className: "!bg-slate-900 border-t border-slate-700"}} anchor="bottom" open={infoViewing} onClose={() => {setInfoViewing(false)}}>
             <div className="mx-auto max-w-4xl w-full text-white py-6">
                 <h3 className="font-semibold text-xl text-orange-300">About</h3>
-                <p className="mb-2">Hi, as you could probably tell from the website, I am Jai. I'm a 7th grader, and I'm running for president. I thought it would be cool to use ChatGPT to create some hype for my campaign.</p>
+                <p className="mb-2">Hi, as you could probably tell from the website, I'm Jai. I'm a 7th grader, and I'm running for president. I thought it would be cool to use ChatGPT to create some hype for my campaign.</p>
                 <p className="mb-2">If you are curious about what this means: I'm using OpenAI's ChatGPT API that was released last week. I compiled a custom version of PostgreSQL on Amazon Linux that implements vector data types and indexing. I'm using OpenAI's embeddings API to vectorize conversations and am storing this in the Postgres vector database. In ongoing conversations, I'm using a cosine-similarity search to look up relevant conversations from the vector database and I pass this on to ChatGPT as context. This means that ChatGPT is able to use context in real time from across user sessions.</p>
                 <p className="mb-2">I know you will be tempted to break this. Please remember that this is a middle school environment. I am using regex matching on a Google dataset of bad words to block them in the prompt (these I don't save to the vector database). I'm also calling OpenAI's content moderation API to detect hateful or self-harming messages. But, it is well-known that LLMs are far from perfect, and if you are determined, you can break this easily. Please don't try here, that is really not the point. Also, this is all running on a t2.micro instance :)</p>
                 <p>By the way, if you are really curious, here is the <a href="https://github.com/day-trip/asb2023" className="text-blue-300">source code</a>. Thank you for visiting my website and if you are eligible to vote, please vote for me : )</p>
