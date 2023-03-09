@@ -186,34 +186,46 @@ const App = () => {
 
     const addMessage = () => {
         const x = async () => {
-            if (new Filter().isProfane(message)) {
+            const proc = message.trim();
+            if (new Filter().isProfane(proc)) {
                 setMessages([...messages, {role: "bozo", content: "At Evergreen Middle School, we strive to promote an inclusive and respectful environment, including by the words we use. Can you please say that again without the swear words?"}]);
                 return;
             }
-            const msg = {role: "user", content: message};
+            const msg = {role: "user", content: proc};
             setMessages([...messages, msg, {role: "assistant", content: "..."}]);
             setMessage("");
-            setTyping(true);
-            const stream = await ChatGPT.send([...messages], message, user, session);
-            setMessages(msgs1 => {
-                const msgs = [...msgs1];
-                msgs[msgs.length - 1].content = "";
-                return msgs;
-            });
-            const decoder = new TextDecoder();
-            let i = 0;
-            for await (const chunk of yieldStream(stream)) {
-                i++;
-                const token = JSON.parse(decoder.decode(chunk as Uint8Array));
-                if (token.content) {
-                    setMessages(msgs1 => {
-                        const msgs = [...msgs1];
-                        msgs[msgs.length - 1].content += token.content;
-                        return msgs;
-                    })
+            try {
+                setTyping(true);
+                const stream = await ChatGPT.send([...messages], proc, user, session);
+                setMessages(msgs1 => {
+                    const msgs = [...msgs1];
+                    msgs[msgs.length - 1].content = "";
+                    return msgs;
+                });
+                const decoder = new TextDecoder();
+                let i = 0;
+                for await (const chunk of yieldStream(stream)) {
+                    i++;
+                    const token = JSON.parse(decoder.decode(chunk as Uint8Array));
+                    if (token.content) {
+                        setMessages(msgs1 => {
+                            const msgs = [...msgs1];
+                            msgs[msgs.length - 1].content += token.content;
+                            return msgs;
+                        })
+                    }
                 }
+            } catch (e) {
+                console.error(e);
+                setMessages(msgs1 => {
+                    const msgs = [...msgs1];
+                    msgs[msgs.length - 1].role = "bozo";
+                    msgs[msgs.length - 1].content = "An error seems to have occurred in our servers. This may be a planned outage. Please try again soon.";
+                    return msgs;
+                });
+            } finally {
+                setTyping(false);
             }
-            setTyping(false);
         }
         x().then();
     }
