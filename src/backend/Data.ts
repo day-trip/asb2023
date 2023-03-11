@@ -6,7 +6,7 @@ class Data {
     private static _endpoint: string;
     static squel: squel.PostgresSquel;
     static init() {
-        this._endpoint = "http://ec2-18-209-224-242.compute-1.amazonaws.com:3000";
+        this._endpoint = "https://ec2-18-209-224-242.compute-1.amazonaws.com:3000";
         this.squel = squel.useFlavour("postgres");
     }
 

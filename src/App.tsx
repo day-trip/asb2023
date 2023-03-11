@@ -32,7 +32,7 @@ import ChatGPT from "./ai/ChatGPT";
 import {yieldStream} from "yield-stream";
 import {Button, Drawer} from "@mui/material";
 
-const socket = io("ws://ec2-18-209-224-242.compute-1.amazonaws.com:5000", {autoConnect: false});
+const socket = io("wss://ec2-18-209-224-242.compute-1.amazonaws.com:5000", {autoConnect: false});
 
 const processIdea = (i: string): [number, number][] => {
     const filter = new Filter({placeHolder: "⨕"});
