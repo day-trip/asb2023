@@ -59,9 +59,8 @@ class Data {
     }
 
     static async _sql(query: Query): Promise<{rows?: Array<{[key: string]: any}>, fields?: Array<{[key: string]: string}>, oid?: string}> {
-        console.log("Executing SQL command:\n" + query.toString());
+        console.debug("Executing SQL command:\n" + query.toString());
         query.updateOptions({...query.options, parameterCharacter: "POOPMAN", replaceSingleQuotes: true});
-        console.log(query.toString())
         const data = await fetch(this._endpoint/* + "/sql"*/, {method: "post", body: query.toString()});
         const text = await data.text();
         const json = this._tryParseJSONObject(text);

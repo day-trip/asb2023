@@ -27,7 +27,7 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import Sort from "@mui/icons-material/Sort";
-import {Delete, Send} from "@mui/icons-material";
+import {Close, Delete, Send} from "@mui/icons-material";
 import ChatGPT from "./ai/ChatGPT";
 import {yieldStream} from "yield-stream";
 import {Button, Drawer} from "@mui/material";
@@ -301,9 +301,7 @@ const App = () => {
             <Toolbar className="w-full max-w-4xl mx-auto" disableGutters={true}>
                 <img src={ems} alt="Evergreen Middle School" className="w-8 h-8 mr-2"/>
                 <p style={{ flexGrow: 1 }} className="font-bold text-xl">EMS - ASB 2023</p>
-                <div className="flex gap-4">
-                    <img src={page === 0 ? incognito : ballot} alt="Incognito" className={`${page === 0 ? "w-10 h-10" : "w-12 h-12"} cursor-pointer animate-pulse`} onClick={() => setPage(page === 0 ? 2 : 0)}/>
-                </div>
+                <img src={page === 0 ? incognito : ballot} alt="Incognito" className={`${page === 0 ? "w-10 h-10" : "w-12 h-12"} cursor-pointer animate-pulse`} onClick={() => setPage(page === 0 ? 2 : 0)}/>
             </Toolbar>
         </AppBar>
         <div className={`max-w-4xl w-full mx-auto ${page === 2 && "pb-12"}`}>
@@ -386,7 +384,10 @@ const App = () => {
         </div>}
         {page === 2 && <Drawer PaperProps={{className: "!bg-slate-900 border-t border-slate-700"}} anchor="bottom" open={infoViewing} onClose={() => {setInfoViewing(false)}}>
             <div className="mx-auto max-w-4xl w-full text-white py-6">
-                <h3 className="font-semibold text-xl text-orange-300">About</h3>
+                <div className="w-full flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-xl text-orange-300">About</h3>
+                    <IconButton color="primary" onClick={() => {setInfoViewing(false)}}><Close/></IconButton>
+                </div>
                 <p className="mb-2">Hi, as you could probably tell from the website, I'm Jai. I'm a 7th grader, and I'm running for president. I thought it would be cool to use ChatGPT to create some hype for my campaign.</p>
                 <p className="mb-2">If you are curious about what this means: I'm using OpenAI's ChatGPT API that was released last week. I compiled a custom version of PostgreSQL on Amazon Linux that implements vector data types and indexing. I'm using OpenAI's embeddings API to vectorize conversations and am storing this in the Postgres vector database. In ongoing conversations, I'm using a cosine-similarity search to look up relevant conversations from the vector database and I pass this on to ChatGPT as context. This means that ChatGPT is able to use context in real-time from across user sessions.</p>
                 <p className="mb-2">I know you will be tempted to break this. Please remember that this is a middle school environment. I am using regex matching on a Google dataset of bad words to block them in the prompt (these I don't save to the vector database). I'm also calling OpenAI's content moderation API to detect hateful or self-harming messages. But, it is well-known that LLMs are far from perfect, and if you are determined, you can break this easily. Please don't try here, that is really not the point. Also, this is all running on a t2.micro instance :)</p>
